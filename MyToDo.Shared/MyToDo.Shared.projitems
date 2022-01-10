@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>8b325c26-3fa9-428c-8987-de5c315f8f0f</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>MyToDo.Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Dtos\MemoDto.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Dtos\ToDoDto.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Dtos\UserDto.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Dtos\BaseDto.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IPagedList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PagedList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Parameters\QueryParameters.cs" />
+  </ItemGroup>
+</Project>

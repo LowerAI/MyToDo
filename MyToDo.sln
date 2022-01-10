@@ -3,11 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32104.313
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyToDo", "MyToDo\MyToDo.csproj", "{1E7E3FEE-7864-4796-9E4B-A9896F2AFBD3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyToDo", "MyToDo\MyToDo.csproj", "{1E7E3FEE-7864-4796-9E4B-A9896F2AFBD3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyToDo.Api", "MyToDo.Api\MyToDo.Api.csproj", "{1B95A9F5-8609-4ADB-8609-580EDDF70E1A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyToDo.Api", "MyToDo.Api\MyToDo.Api.csproj", "{1B95A9F5-8609-4ADB-8609-580EDDF70E1A}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "MyToDo.Shared", "MyToDo.Shared\MyToDo.Shared.shproj", "{8B325C26-3FA9-428C-8987-DE5C315F8F0F}"
 EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		MyToDo.Shared\MyToDo.Shared.projitems*{1b95a9f5-8609-4adb-8609-580eddf70e1a}*SharedItemsImports = 5
+		MyToDo.Shared\MyToDo.Shared.projitems*{8b325c26-3fa9-428c-8987-de5c315f8f0f}*SharedItemsImports = 13
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU

@@ -23,7 +23,7 @@ builder.Services.AddDbContext<MyToDoContext>(option => option.UseSqlite(connecti
 
 builder.Services.AddTransient<IToDoService, ToDoService>();
 builder.Services.AddTransient<IMemoService, MemoService>();
-builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<ILoginService, LoginService>();
 #endregion
 
 var autoMapperConfig = new MapperConfiguration(config =>

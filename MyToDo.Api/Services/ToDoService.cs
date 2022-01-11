@@ -65,7 +65,7 @@ public class ToDoService : IToDoService
         try
         {
             var repository = _unitOfWork.GetRepository<ToDo>();
-            var todo = await repository.GetPagedListAsync(predicate: x => string.IsNullOrWhiteSpace(parameters.Search) ? true : x.Title.Equals(parameters.Search), pageIndex: parameters.PageIndex, pageSize: parameters.PageSize, orderBy: source => source.OrderByDescending(t => t.CreateDate));
+            var todo = await repository.GetPagedListAsync(predicate: x => string.IsNullOrWhiteSpace(parameters.Search) ? true : x.Title.Contains(parameters.Search), pageIndex: parameters.PageIndex, pageSize: parameters.PageSize, orderBy: source => source.OrderByDescending(t => t.CreateDate));
 
             return new ApiResponse(true, todo);
         }

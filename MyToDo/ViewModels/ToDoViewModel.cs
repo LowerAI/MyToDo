@@ -1,21 +1,24 @@
-﻿using MyToDo.Common.Models;
+﻿using Microsoft.AspNetCore.Components.Routing;
+
 using MyToDo.Service;
+using MyToDo.Shared.Dtos;
 
 using Prism.Commands;
+using Prism.Ioc;
 using Prism.Mvvm;
 
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace MyToDo.ViewModels;
 
-public class ToDoViewModel : BindableBase
+public class ToDoViewModel : NavigateViewModel
 {
-    public ToDoViewModel(IToDoService service)
+    public ToDoViewModel(IToDoService service, IContainerProvider provider) : base(provider)
     {
         _service = service;
         ToDoDtos = new();
         AddCommand = new DelegateCommand(Add);
-        CreateToDoList();
     }
 
     private void Add()
@@ -45,8 +48,10 @@ public class ToDoViewModel : BindableBase
         set { toDoDtos = value; RaisePropertyChanged(); }
     }
 
-    async void CreateToDoList()
+    async void GetDataAsync()
     {
+        UpdateLoading(true);
+
         var todoResult = await _service.GetAllAsync(new Shared.Parameters.QueryParameters()
         {
             PageIndex = 0,
@@ -61,5 +66,13 @@ public class ToDoViewModel : BindableBase
                 ToDoDtos.Add(item);
             }
         }
+
+        UpdateLoading(false);
+    }
+
+    public override void OnNavigatedTo(Prism.Regions.NavigationContext navigationContext)
+    {
+        base.OnNavigatedTo(navigationContext);
+        GetDataAsync();
     }
 }

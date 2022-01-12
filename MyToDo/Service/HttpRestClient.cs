@@ -1,10 +1,9 @@
 ﻿using MyToDo.Api.Services;
 
+using Newtonsoft.Json;
+
 using RestSharp;
 
-using Swifter.Json;
-
-using System.Text.Json;
 using System.Threading.Tasks;
 
 
@@ -28,11 +27,12 @@ public class HttpRestClient
 
         if (baseRequest.Parameter != null)
         {
-            request.AddParameter("param", JsonFormatter.SerializeObject(baseRequest.Parameter),ParameterType.RequestBody);
+            request.AddParameter("param", JsonConvert.SerializeObject(baseRequest.Parameter),ParameterType.RequestBody);
         }
         client.BuildUri(request);
         var response = await client.ExecuteAsync(request);
-        return JsonFormatter.DeserializeObject<ApiResponse>(response.Content);
+        var result = JsonConvert.DeserializeObject<ApiResponse>(response.Content);
+        return result;
     }
 
     public async Task<ApiResponse<T>> ExecuteAsync<T>(BaseRequest baseRequest)
@@ -42,11 +42,14 @@ public class HttpRestClient
 
         if (baseRequest.Parameter != null)
         {
-            request.AddParameter("param", JsonFormatter.SerializeObject(baseRequest.Parameter), ParameterType.RequestBody);
+            request.AddParameter("param", JsonConvert.SerializeObject(baseRequest.Parameter), ParameterType.RequestBody);
         }
         client.BuildUri(request);
         var response = await client.ExecuteAsync(request);
-        var result = JsonFormatter.DeserializeObject<ApiResponse<T>>(response.Content);
+        //var result = JsonFormatter.DeserializeObject<ApiResponse<T>>(response.Content);
+
+        // 此处的“ApiResponse<T>”在运行时被替换为“ApiResponse<PagedList<ToDoDto>>”/“ApiResponse<PagedList<MemoDto>>”/“ApiResponse<PagedList<UserDto>>”，对于这种多层嵌套的json反序列化为指定类型的对象经测试只有Newtonsoft.Json可以正确解析
+        var result = JsonConvert.DeserializeObject<ApiResponse<T>>(response.Content);
         //var result = JsonSerializer.Deserialize<ApiResponse<T>>(response.Content);
         return result;
     }

@@ -1,4 +1,4 @@
-﻿using MyToDo.Common.Models;
+﻿using MyToDo.Shared.Dtos;
 
 namespace MyToDo.Service;
 

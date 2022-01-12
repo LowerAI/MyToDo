@@ -13,9 +13,9 @@
 
   <ItemGroup>
     <PackageReference Include="MaterialDesignThemes" Version="4.3.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
     <PackageReference Include="RestSharp" Version="107.0.2" />
-    <PackageReference Include="Swifter.Json" Version="1.5.0.3" />
   </ItemGroup>
 
   <ItemGroup>

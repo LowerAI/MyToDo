@@ -28,7 +28,7 @@ public class MemoService : IMemoService
 
             if (await _unitOfWork.SaveChangesAsync() > 0)
             {
-                return new ApiResponse(true, model);
+                return new ApiResponse(true, memo);
             }
 
             return new ApiResponse("添加数据失败!");
@@ -60,7 +60,7 @@ public class MemoService : IMemoService
         }
     }
 
-    public async Task<ApiResponse> GetAllAsync(QueryParameters parameters)
+    public async Task<ApiResponse> GetAllAsync(QueryParameter parameters)
     {
         try
         {

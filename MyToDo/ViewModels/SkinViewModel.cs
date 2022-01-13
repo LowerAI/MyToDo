@@ -10,54 +10,53 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Media;
 
-namespace MyToDo.ViewModels
+namespace MyToDo.ViewModels;
+
+public class SkinViewModel : BindableBase
 {
-    public class SkinViewModel : BindableBase
+    private bool _isDarkTheme = true;
+    public bool IsDarkTheme
     {
-        private bool _isDarkTheme = true;
-        public bool IsDarkTheme
+        get => _isDarkTheme;
+        set
         {
-            get => _isDarkTheme;
-            set
+            if (SetProperty(ref _isDarkTheme, value))
             {
-                if (SetProperty(ref _isDarkTheme, value))
-                {
-                    ModifyTheme(theme => theme.SetBaseTheme(value ? Theme.Dark : Theme.Light));
-                }
+                ModifyTheme(theme => theme.SetBaseTheme(value ? Theme.Dark : Theme.Light));
             }
         }
+    }
 
-        private readonly PaletteHelper paletteHelper = new PaletteHelper();
-        public IEnumerable<ISwatch> Swatches { get; } = SwatchHelper.Swatches;
+    private readonly PaletteHelper paletteHelper = new PaletteHelper();
+    public IEnumerable<ISwatch> Swatches { get; } = SwatchHelper.Swatches;
 
-        public DelegateCommand<object> ChangeHueCommand { get; private set; }
+    public DelegateCommand<object> ChangeHueCommand { get; private set; }
 
-        public SkinViewModel()
-        {
-            ChangeHueCommand = new DelegateCommand<object>(ChangeHue);
-        }
+    public SkinViewModel()
+    {
+        ChangeHueCommand = new DelegateCommand<object>(ChangeHue);
+    }
 
-        private static void ModifyTheme(Action<ITheme> modificationAction)
-        {
-            var paletteHelper = new PaletteHelper();
-            ITheme theme = paletteHelper.GetTheme();
+    private static void ModifyTheme(Action<ITheme> modificationAction)
+    {
+        var paletteHelper = new PaletteHelper();
+        ITheme theme = paletteHelper.GetTheme();
 
-            modificationAction?.Invoke(theme);
+        modificationAction?.Invoke(theme);
 
-            paletteHelper.SetTheme(theme);
-        }
+        paletteHelper.SetTheme(theme);
+    }
 
-        private void ChangeHue(object obj)
-        {
-            var hue = (Color)obj;
+    private void ChangeHue(object obj)
+    {
+        var hue = (Color)obj;
 
-            ITheme theme = paletteHelper.GetTheme();
+        ITheme theme = paletteHelper.GetTheme();
 
-            theme.PrimaryLight = new ColorPair(hue.Lighten());
-            theme.PrimaryMid = new ColorPair(hue);
-            theme.PrimaryDark = new ColorPair(hue.Darken());
+        theme.PrimaryLight = new ColorPair(hue.Lighten());
+        theme.PrimaryMid = new ColorPair(hue);
+        theme.PrimaryDark = new ColorPair(hue.Darken());
 
-            paletteHelper.SetTheme(theme);
-        }
+        paletteHelper.SetTheme(theme);
     }
 }

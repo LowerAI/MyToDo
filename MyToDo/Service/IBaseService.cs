@@ -12,7 +12,7 @@ public interface IBaseService<TEntity> where TEntity : class
 
     Task<ApiResponse> DeleteAsync(int Id);
 
-    Task<ApiResponse<PagedList<TEntity>>> GetAllAsync(QueryParameters parameter);
+    Task<ApiResponse<PagedList<TEntity>>> GetAllAsync(QueryParameter parameter);
 
     Task<ApiResponse<TEntity>> GetFirstOrDefaultAsync(int id);
 

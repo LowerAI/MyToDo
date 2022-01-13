@@ -21,7 +21,7 @@ public class LoginService : ILoginService
     {
         try
         {
-            var model = _unitOfWork.GetRepository<User>().GetFirstOrDefaultAsync(predicate: x => (x.Account.Equals(Account)) && (x.Password.Equals(Password)));
+            var model = await _unitOfWork.GetRepository<User>().GetFirstOrDefaultAsync(predicate: x => (x.Account.Equals(Account)) && (x.Password.Equals(Password)));
 
             if (model == null)
             {
@@ -30,7 +30,7 @@ public class LoginService : ILoginService
 
             return new ApiResponse(true, model);
         }
-        catch (Exception ex)
+        catch
         {
             return new ApiResponse(false, "登录失败");
         }
@@ -60,7 +60,7 @@ public class LoginService : ILoginService
 
             return new ApiResponse("添加失败！");
         }
-        catch (Exception ex)
+        catch
         {
             return new ApiResponse(false, "注册帐号失败！");
         }

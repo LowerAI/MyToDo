@@ -4,7 +4,7 @@ namespace MyToDo.Api.Services;
 
 public interface IBaseService<T>
 {
-    Task<ApiResponse> GetAllAsync(QueryParameters parameters);
+    Task<ApiResponse> GetAllAsync(QueryParameter parameters);
 
     Task<ApiResponse> GetSingleAsync(int id);
 

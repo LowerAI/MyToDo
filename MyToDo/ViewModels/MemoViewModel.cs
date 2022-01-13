@@ -50,7 +50,7 @@ namespace MyToDo.ViewModels
 
         async void CreateToDoList()
         {
-            var memoResult = await _service.GetAllAsync(new Shared.Parameters.QueryParameters
+            var memoResult = await _service.GetAllAsync(new Shared.Parameters.ToDoParameter
             {
                 PageIndex = 0,
                 PageSize = 100,

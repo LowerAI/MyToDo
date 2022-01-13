@@ -60,7 +60,7 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<ApiResponse> GetAllAsync(QueryParameters parameters)
+    public async Task<ApiResponse> GetAllAsync(QueryParameter parameters)
     {
         try
         {

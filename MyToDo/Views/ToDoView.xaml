@@ -2,7 +2,9 @@
     x:Class="MyToDo.Views.ToDoView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cvt="clr-namespace:MyToDo.Common.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:MyToDo.Views"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -11,6 +13,9 @@
     d:DesignWidth="800"
     prism:ViewModelLocator.AutoWireViewModel="True"
     mc:Ignorable="d">
+    <UserControl.Resources>
+        <cvt:IntToVisibilityConverter x:Key="IntToVisibility" />
+    </UserControl.Resources>
     <materialDesign:DialogHost>
         <materialDesign:DrawerHost IsRightDrawerOpen="{Binding IsRightDrawerOpen}">
             <materialDesign:DrawerHost.RightDrawerContent>
@@ -27,7 +32,7 @@
                         DockPanel.Dock="Top"
                         Orientation="Horizontal">
                         <TextBlock VerticalAlignment="Center" Text="状态：" />
-                        <ComboBox>
+                        <ComboBox SelectedIndex="{Binding CurrentDto.Status}">
                             <ComboBoxItem>待办</ComboBoxItem>
                             <ComboBoxItem>已完成</ComboBoxItem>
                         </ComboBox>
@@ -36,14 +41,18 @@
                     <TextBox
                         Margin="20,0"
                         materialDesign:HintAssist.Hint="请输入待办概要"
-                        DockPanel.Dock="Top" />
+                        DockPanel.Dock="Top"
+                        Text="{Binding CurrentDto.Title}" />
                     <TextBox
                         MinHeight="100"
                         Margin="20"
                         materialDesign:HintAssist.Hint="请输入待办内容"
-                        DockPanel.Dock="Top" />
+                        DockPanel.Dock="Top"
+                        Text="{Binding CurrentDto.Content}" />
                     <Button
                         Margin="20,0"
+                        Command="{Binding ExecuteCommand}"
+                        CommandParameter="保存"
                         Content="添加到待办"
                         DockPanel.Dock="Top" />
                 </DockPanel>
@@ -58,15 +67,24 @@
                 <StackPanel Margin="15,0,0,0" Orientation="Horizontal">
                     <TextBox
                         Width="250"
+                        VerticalAlignment="Center"
                         materialDesign:HintAssist.Hint="查找待办事项..."
-                        materialDesign:TextFieldAssist.HasClearButton="True" />
+                        materialDesign:TextFieldAssist.HasClearButton="True"
+                        Text="{Binding Search, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <TextBox.InputBindings>
+                            <KeyBinding
+                                Key="Enter"
+                                Command="{Binding ExecuteCommand}"
+                                CommandParameter="查询" />
+                        </TextBox.InputBindings>
+                    </TextBox>
                     <TextBlock
                         Margin="10,0"
                         VerticalAlignment="Center"
                         Text="筛选：" />
-                    <ComboBox SelectedIndex="0">
+                    <ComboBox SelectedIndex="{Binding SelectedIndex}">
                         <ComboBoxItem>全部</ComboBoxItem>
-                        <ComboBoxItem>代办</ComboBoxItem>
+                        <ComboBoxItem>待办</ComboBoxItem>
                         <ComboBoxItem>已完成</ComboBoxItem>
                     </ComboBox>
                 </StackPanel>
@@ -74,8 +92,23 @@
                 <Button
                     Margin="10,0"
                     HorizontalAlignment="Right"
-                    Command="{Binding AddCommand}"
+                    Command="{Binding ExecuteCommand}"
+                    CommandParameter="新增"
                     Content="+ 添加待办" />
+
+                <StackPanel
+                    Grid.Row="1"
+                    VerticalAlignment="Center"
+                    Visibility="{Binding ToDoDtos.Count, Converter={StaticResource IntToVisibility}}">
+                    <Image
+                        Width="120"
+                        Height="120"
+                        Source="/Images/wind.jpg" />
+                    <TextBlock
+                        Margin="0,10"
+                        FontSize="18"
+                        Text="尝试添加一些待办事项，以便在此处查看他们。" />
+                </StackPanel>
 
                 <ScrollViewer Grid.Row="1">
                     <ItemsControl
@@ -96,19 +129,41 @@
                                         MinHeight="180"
                                         MaxHeight="250"
                                         Margin="8">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="MouseLeftButtonUp">
+                                                <i:InvokeCommandAction Command="{Binding DataContext.SelectedCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}}" CommandParameter="{Binding}" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="auto" />
                                             <RowDefinition />
                                         </Grid.RowDefinitions>
 
                                         <materialDesign:PopupBox HorizontalAlignment="Right" Panel.ZIndex="1">
-                                            <Button Content="删除" />
+                                            <Button
+                                                Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}}"
+                                                CommandParameter="{Binding}"
+                                                Content="删除" />
                                         </materialDesign:PopupBox>
 
                                         <Border
                                             Grid.RowSpan="2"
                                             Background="Green"
-                                            CornerRadius="3" />
+                                            CornerRadius="3">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Status}" Value="待办">
+                                                            <Setter Property="Background" Value="#3CB371" />
+                                                        </DataTrigger>
+
+                                                        <DataTrigger Binding="{Binding Status}" Value="已完成">
+                                                            <Setter Property="Background" Value="#1E90FF" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                        </Border>
 
                                         <TextBlock
                                             Padding="10,5"

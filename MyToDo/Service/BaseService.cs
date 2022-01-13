@@ -20,7 +20,7 @@ public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class
     public async Task<ApiResponse<TEntity>> AddAsync(TEntity entity)
     {
         BaseRequest request = new BaseRequest();
-        request.Method = RestSharp.Method.Put;
+        request.Method = RestSharp.Method.Post;
         request.Route = $"api/{_serviceName}";
         request.Parameter = entity;
         return await _client.ExecuteAsync<TEntity>(request);
@@ -34,7 +34,7 @@ public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class
         return await _client.ExecuteAsync(request);
     }
 
-    public async Task<ApiResponse<PagedList<TEntity>>> GetAllAsync(QueryParameters parameter)
+    public async Task<ApiResponse<PagedList<TEntity>>> GetAllAsync(QueryParameter parameter)
     {
         BaseRequest request = new BaseRequest();
         request.Method = RestSharp.Method.Get;

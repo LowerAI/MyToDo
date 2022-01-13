@@ -15,6 +15,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Dtos\BaseDto.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IPagedList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PagedList.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Parameters\QueryParameters.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Parameters\QueryParameter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Parameters\ToDoParameter.cs" />
   </ItemGroup>
 </Project>

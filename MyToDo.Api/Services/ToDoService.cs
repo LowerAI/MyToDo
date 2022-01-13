@@ -23,12 +23,12 @@ public class ToDoService : IToDoService
         try
         {
             var todo = _mapper.Map<ToDo>(model);
-
+            todo.CreateDate = DateTime.Now;
             await _unitOfWork.GetRepository<ToDo>().InsertAsync(todo);
 
             if (await _unitOfWork.SaveChangesAsync() > 0)
             {
-                return new ApiResponse(true, model);
+                return new ApiResponse(true, todo);
             }
 
             return new ApiResponse("添加数据失败!");
@@ -60,12 +60,27 @@ public class ToDoService : IToDoService
         }
     }
 
-    public async Task<ApiResponse> GetAllAsync(QueryParameters parameters)
+    public async Task<ApiResponse> GetAllAsync(QueryParameter parameter)
     {
         try
         {
             var repository = _unitOfWork.GetRepository<ToDo>();
-            var todo = await repository.GetPagedListAsync(predicate: x => string.IsNullOrWhiteSpace(parameters.Search) ? true : x.Title.Contains(parameters.Search), pageIndex: parameters.PageIndex, pageSize: parameters.PageSize, orderBy: source => source.OrderByDescending(t => t.CreateDate));
+            var todo = await repository.GetPagedListAsync(predicate: x => string.IsNullOrWhiteSpace(parameter.Search) ? true : x.Title.Contains(parameter.Search), pageIndex: parameter.PageIndex, pageSize: parameter.PageSize, orderBy: source => source.OrderByDescending(t => t.CreateDate));
+
+            return new ApiResponse(true, todo);
+        }
+        catch (Exception ex)
+        {
+            return new ApiResponse(ex.Message);
+        }
+    }
+
+    public async Task<ApiResponse> GetAllAsync(ToDoParameter parameter)
+    {
+        try
+        {
+            var repository = _unitOfWork.GetRepository<ToDo>();
+            var todo = await repository.GetPagedListAsync(predicate: x => (string.IsNullOrWhiteSpace(parameter.Search) ? true : x.Title.Contains(parameter.Search)) && (parameter.Status == null ? true : x.Status.Equals(parameter.Status)), pageIndex: parameter.PageIndex, pageSize: parameter.PageSize, orderBy: source => source.OrderByDescending(t => t.CreateDate));
 
             return new ApiResponse(true, todo);
         }

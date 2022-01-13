@@ -18,12 +18,11 @@ public class ToDoDto : BaseDto
         set { content = value; OnPropertyChanged(); }
     }
 
-    private string status;
+    private int status;
 
-    public string Status
+    public int Status
     {
         get { return status; }
         set { status = value; OnPropertyChanged(); }
     }
-
 }

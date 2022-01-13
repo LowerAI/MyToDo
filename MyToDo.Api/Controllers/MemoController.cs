@@ -26,7 +26,7 @@ public class MemoController : ControllerBase
 
     // GET api/Memo
     [HttpGet]
-    public async Task<ApiResponse> GetAll([FromQuery] QueryParameters param) => await _service.GetAllAsync(param);
+    public async Task<ApiResponse> GetAll([FromQuery] ToDoParameter param) => await _service.GetAllAsync(param);
 
     // PUT api/Memo
     [HttpPut]

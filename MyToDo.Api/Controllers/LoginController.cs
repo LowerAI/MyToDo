@@ -23,7 +23,7 @@ public class LoginController : ControllerBase
     [HttpGet]
     public async Task<ApiResponse> Get(string account, string password) => await _service.LoginActionAsync(account, password);
 
-    // PUT api/Login
-    [HttpPut]
+    // POST api/Login
+    [HttpPost]
     public async Task<ApiResponse> Register([FromBody] UserDto param) => await _service.RegisterAsync(param);
 }

@@ -25,5 +25,4 @@ public class UserDto : BaseDto
         get { return password; }
         set { password = value; OnPropertyChanged(); }
     }
-
 }

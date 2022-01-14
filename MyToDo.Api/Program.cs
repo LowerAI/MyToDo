@@ -32,7 +32,9 @@ var autoMapperConfig = new MapperConfiguration(config =>
 });
 builder.Services.AddSingleton(autoMapperConfig.CreateMapper());
 
-builder.Services.AddControllers(); // 本句确保能在Swagger中看到Controller
+// 本句确保能在Swagger中看到Controller
+builder.Services.AddControllers(options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true);
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

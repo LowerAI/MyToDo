@@ -23,7 +23,7 @@ public class MemoService : IMemoService
         try
         {
             var memo = _mapper.Map<Memo>(model);
-
+            memo.CreateDate = DateTime.Now;
             await _unitOfWork.GetRepository<Memo>().InsertAsync(memo);
 
             if (await _unitOfWork.SaveChangesAsync() > 0)
@@ -65,7 +65,7 @@ public class MemoService : IMemoService
         try
         {
             var repository = _unitOfWork.GetRepository<Memo>();
-            var memo = await repository.GetPagedListAsync(predicate: x => string.IsNullOrWhiteSpace(parameters.Search) ? true : x.Title.Equals(parameters.Search), pageIndex: parameters.PageIndex, pageSize: parameters.PageSize, orderBy: source => source.OrderByDescending(t => t.CreateDate));
+            var memo = await repository.GetPagedListAsync(predicate: x => string.IsNullOrWhiteSpace(parameters.Search) ? true : x.Title.Contains(parameters.Search), pageIndex: parameters.PageIndex, pageSize: parameters.PageSize, orderBy: source => source.OrderByDescending(t => t.CreateDate));
 
             return new ApiResponse(true, memo);
         }

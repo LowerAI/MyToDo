@@ -20,6 +20,14 @@ public class MemoController : ControllerBase
         _service = service;
     }
 
+    // POST api/Memo
+    [HttpPost]
+    public async Task<ApiResponse> Add([FromBody] MemoDto model) => await _service.AddAsync(model);
+
+    // DELETE api/Memo/5
+    [HttpDelete("{id}")]
+    public async Task<ApiResponse> Delete(int id) => await _service.DeleteAsync(id);
+
     // GET api/Memo/5
     [HttpGet("{id}")]
     public async Task<ApiResponse> Get(int id) => await _service.GetSingleAsync(id);
@@ -30,13 +38,5 @@ public class MemoController : ControllerBase
 
     // PUT api/Memo
     [HttpPut]
-    public async Task<ApiResponse> Add([FromBody] MemoDto model) => await _service.AddAsync(model);
-
-    // PATCH api/Memo
-    [HttpPatch]
-    public async Task<ApiResponse> Update([FromBody]MemoDto model) => await _service.UpdateAsync(model);
-
-    // DELETE api/Memo/5
-    [HttpDelete("{id}")]
-    public async Task<ApiResponse> Delete(int id) => await _service.DeleteAsync(id);
+    public async Task<ApiResponse> Update([FromBody] MemoDto model) => await _service.UpdateAsync(model);
 }

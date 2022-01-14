@@ -1,5 +1,6 @@
 ﻿using DryIoc;
 
+using MyToDo.Common;
 using MyToDo.Service;
 using MyToDo.ViewModels;
 using MyToDo.Views;
@@ -19,6 +20,16 @@ public partial class App : PrismApplication
     protected override Window CreateShell()
     {
         return Container.Resolve<MainView>();
+    }
+
+    protected override void OnInitialized()
+    {
+        var service = App.Current.MainWindow.DataContext as IConfigureService;
+        if (service != null)
+        {
+            service.Configure();
+        }
+        base.OnInitialized();
     }
 
     protected override void RegisterTypes(IContainerRegistry containerRegistry)

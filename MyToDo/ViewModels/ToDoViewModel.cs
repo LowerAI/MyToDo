@@ -4,6 +4,7 @@ using MyToDo.Shared.Parameters;
 
 using Prism.Commands;
 using Prism.Ioc;
+using Prism.Regions;
 
 using System;
 using System.Collections.ObjectModel;
@@ -78,31 +79,36 @@ public class ToDoViewModel : NavigateViewModel
 
     private async void GetDataAsync()
     {
-        UpdateLoading(true);
-
-        int? Status = SelectedIndex == 0 ? null : SelectedIndex == 2 ? 1 : 0;
-
-        var todoResult = await _service.GetAllFilterAsync(new ToDoParameter()
+        try
         {
-            PageIndex = 0,
-            PageSize = 100,
-            Search = Search,
-            Status = Status
-        });
+            UpdateLoading(true);
 
-        if (todoResult.Status)
-        {
-            ToDoDtos.Clear();
-            foreach (var item in todoResult.Result.Items)
+            int? Status = SelectedIndex == 0 ? null : SelectedIndex == 2 ? 1 : 0;
+
+            var todoResult = await _service.GetAllFilterAsync(new ToDoParameter()
             {
-                ToDoDtos.Add(item);
+                PageIndex = 0,
+                PageSize = 100,
+                Search = Search,
+                Status = Status
+            });
+
+            if (todoResult.Status)
+            {
+                ToDoDtos.Clear();
+                foreach (var item in todoResult.Result.Items)
+                {
+                    ToDoDtos.Add(item);
+                }
             }
         }
-
-        UpdateLoading(false);
+        finally
+        {
+            UpdateLoading(false);
+        }
     }
 
-    public override void OnNavigatedTo(Prism.Regions.NavigationContext navigationContext)
+    public override void OnNavigatedTo(NavigationContext navigationContext)
     {
         base.OnNavigatedTo(navigationContext);
         GetDataAsync();

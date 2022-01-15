@@ -3,7 +3,9 @@
 using MyToDo.Common;
 using MyToDo.Service;
 using MyToDo.ViewModels;
+using MyToDo.ViewModels.Dialogs;
 using MyToDo.Views;
+using MyToDo.Views.Dialogs;
 
 using Prism.DryIoc;
 using Prism.Ioc;
@@ -39,6 +41,10 @@ public partial class App : PrismApplication
 
         containerRegistry.Register<IToDoService, ToDoService>();
         containerRegistry.Register<IMemoService, MemoService>();
+        containerRegistry.Register<IDialogHostService, DialogHostService>();
+
+        containerRegistry.RegisterForNavigation<AddToDoView, AddToDoViewModel>();
+        containerRegistry.RegisterForNavigation<AddMemoView, AddMemoViewModel>();
 
         containerRegistry.RegisterForNavigation<IndexView, IndexViewModel>();
         containerRegistry.RegisterForNavigation<ToDoView, ToDoViewModel>();

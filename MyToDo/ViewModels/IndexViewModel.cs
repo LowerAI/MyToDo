@@ -1,68 +1,89 @@
-﻿using MyToDo.Common.Models;
+﻿using MyToDo.Common;
+using MyToDo.Common.Models;
 using MyToDo.Shared.Dtos;
 
+using Prism.Commands;
 using Prism.Mvvm;
+using Prism.Services.Dialogs;
 
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace MyToDo.ViewModels
+namespace MyToDo.ViewModels;
+
+public class IndexViewModel : BindableBase
 {
-    public class IndexViewModel : BindableBase
+    public IndexViewModel(IDialogHostService dialog)
     {
-        public IndexViewModel()
+        CreateTaskBars();
+        
+        ToDoDtos = new();
+        MemoDtos = new();
+        ExecuteCommand = new DelegateCommand<string>(Execute);
+        this.dialog = dialog;
+    }
+
+    #region    属性start
+    private readonly IDialogHostService dialog;
+
+    public DelegateCommand<string> ExecuteCommand { get; private set; }
+
+    private ObservableCollection<TaskBar> taskBars;
+
+    public ObservableCollection<TaskBar> TaskBars
+    {
+        get { return taskBars; }
+        set { taskBars = value; RaisePropertyChanged(); }
+    }
+
+    private ObservableCollection<ToDoDto> toDoDtos;
+
+    public ObservableCollection<ToDoDto> ToDoDtos
+    {
+        get { return toDoDtos; }
+        set { toDoDtos = value; RaisePropertyChanged(); }
+    }
+
+    private ObservableCollection<MemoDto> memoDtos;
+
+    public ObservableCollection<MemoDto> MemoDtos
+    {
+        get { return memoDtos; }
+        set { memoDtos = value; RaisePropertyChanged(); }
+    }
+    #endregion 属性end
+
+    private void Execute(string obj)
+    {
+        switch (obj)
         {
-            TaskBars = new();
-            CreateTaskBars();
-            CreateTestData();
+            case "新增待办":
+                AddToDo();
+                break;
+            case "新增备忘录":
+                AddMemo();
+                break;
         }
+    }
 
-        private ObservableCollection<TaskBar> taskBars;
+    private void AddToDo()
+    {
+        dialog.ShowDialog("AddToDoView", null);
+    }
 
-        public ObservableCollection<TaskBar> TaskBars
-        {
-            get { return taskBars; }
-            set { taskBars = value; RaisePropertyChanged(); }
-        }
+    private void AddMemo()
+    {
+        dialog.ShowDialog("AddMemoView", null);
+    }
 
-        private ObservableCollection<ToDoDto> toDoDtos;
-
-        public ObservableCollection<ToDoDto> ToDoDtos
-        {
-            get { return toDoDtos; }
-            set { toDoDtos = value; RaisePropertyChanged(); }
-        }
-
-        private ObservableCollection<MemoDto> memoDtos;
-
-        public ObservableCollection<MemoDto> MemoDtos
-        {
-            get { return memoDtos; }
-            set { memoDtos = value; RaisePropertyChanged(); }
-        }
-
-        void CreateTaskBars()
-        {
-            TaskBars.Add(new TaskBar { Icon = "ClockFast", Title = "汇总", Content = "9", Color = "#FF0CA0FF", Target = "" });
-            TaskBars.Add(new TaskBar { Icon = "ClockCheckOutline", Title = "已完成", Content = "9", Color = "#FF1ECA3A", Target = "" });
-            TaskBars.Add(new TaskBar { Icon = "ChartLineVariant", Title = "完成比率", Content = "100%", Color = "#FF02C6DC", Target = "" });
-            TaskBars.Add(new TaskBar { Icon = "PlaylistStar", Title = "备忘录", Content = "19", Color = "#FFFFA000", Target = "" });
-        }
-
-        void CreateTestData()
-        {
-            ToDoDtos = new ObservableCollection<ToDoDto>();
-            MemoDtos = new ObservableCollection<MemoDto>();
-
-            for (int i = 0; i < 10; i++)
-            {
-                ToDoDtos.Add(new ToDoDto { Title = $"代办{i}", Content = "正在处理中...." });
-                MemoDtos.Add(new MemoDto { Title = $"备忘{i}", Content = "我的密码" });
-            }
-        }
+    /// <summary>
+    /// 生成上方的任务栏
+    /// </summary>
+    void CreateTaskBars()
+    {
+        TaskBars = new();
+        TaskBars.Add(new TaskBar { Icon = "ClockFast", Title = "汇总", Content = "9", Color = "#FF0CA0FF", Target = "" });
+        TaskBars.Add(new TaskBar { Icon = "ClockCheckOutline", Title = "已完成", Content = "9", Color = "#FF1ECA3A", Target = "" });
+        TaskBars.Add(new TaskBar { Icon = "ChartLineVariant", Title = "完成比率", Content = "100%", Color = "#FF02C6DC", Target = "" });
+        TaskBars.Add(new TaskBar { Icon = "PlaylistStar", Title = "备忘录", Content = "19", Color = "#FFFFA000", Target = "" });
     }
 }

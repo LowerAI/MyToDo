@@ -8,6 +8,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyToDo.Api", "MyToDo.Api\My
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "MyToDo.Shared", "MyToDo.Shared\MyToDo.Shared.shproj", "{8B325C26-3FA9-428C-8987-DE5C315F8F0F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiagnosticsConsole", "DiagnosticsConsole\DiagnosticsConsole.csproj", "{62F75C58-899C-4306-A2D6-E94A3590B961}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		MyToDo.Shared\MyToDo.Shared.projitems*{1b95a9f5-8609-4adb-8609-580eddf70e1a}*SharedItemsImports = 5
@@ -26,6 +28,10 @@ Global
 		{1B95A9F5-8609-4ADB-8609-580EDDF70E1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B95A9F5-8609-4ADB-8609-580EDDF70E1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B95A9F5-8609-4ADB-8609-580EDDF70E1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62F75C58-899C-4306-A2D6-E94A3590B961}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62F75C58-899C-4306-A2D6-E94A3590B961}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62F75C58-899C-4306-A2D6-E94A3590B961}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62F75C58-899C-4306-A2D6-E94A3590B961}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

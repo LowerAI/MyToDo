@@ -4,6 +4,8 @@ using MyToDo.Api.Context;
 using MyToDo.Api.Context.UnitOfWork;
 using MyToDo.Shared.Dtos;
 
+using System.Security.Principal;
+
 namespace MyToDo.Api.Services;
 
 public class LoginService : ILoginService
@@ -17,26 +19,12 @@ public class LoginService : ILoginService
         _mapper = mapper;
     }
 
-    public async Task<ApiResponse> LoginActionAsync(string Account, string Password)
-    {
-        try
-        {
-            var model = await _unitOfWork.GetRepository<User>().GetFirstOrDefaultAsync(predicate: x => (x.Account.Equals(Account)) && (x.Password.Equals(Password)));
-
-            if (model == null)
-            {
-                return new ApiResponse("帐号或密码错误，请重试！");
-            }
-
-            return new ApiResponse(true, model);
-        }
-        catch
-        {
-            return new ApiResponse(false, "登录失败");
-        }
-    }
-
-    public async Task<ApiResponse> RegisterAsync(UserDto user)
+    /// <summary>
+    /// 添加帐户
+    /// </summary>
+    /// <param name="user"></param>
+    /// <returns></returns>
+    public async Task<bool> AddUserAsync(UserDto user)
     {
         try
         {
@@ -44,25 +32,49 @@ public class LoginService : ILoginService
 
             var repository = _unitOfWork.GetRepository<User>();
 
-            var userModel = await repository.GetFirstOrDefaultAsync(predicate: x => x.Account.Equals(model.Account));
-
-            if (userModel != null)
-            {
-                return new ApiResponse($"当前帐号:{model.Account}已存在，请重新注册！");
-            }
             model.CreateDate = DateTime.Now;
             await repository.InsertAsync(model);
 
-            if (await _unitOfWork.SaveChangesAsync() > 0)
-            {
-                return new ApiResponse(true,model);
-            }
-
-            return new ApiResponse("添加失败！");
+            return await _unitOfWork.SaveChangesAsync() > 0;
         }
         catch
         {
-            return new ApiResponse(false, "注册帐号失败！");
+            throw;
         }
+    }
+
+    /// <summary>
+    /// 查询帐号Id是否存在
+    /// </summary>
+    /// <param name="account"></param>
+    /// <param name="password"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public async Task<User> IsAccountExistAsync(string account)
+    {
+        if (string.IsNullOrWhiteSpace(account))
+        {
+            throw new ArgumentNullException(nameof(account));
+        }
+        return await _unitOfWork.GetRepository<User>().GetFirstOrDefaultAsync(predicate: x => (x.Account.Equals(account)));
+    }
+
+    /// <summary>
+    /// 查询帐户是否存在
+    /// </summary>
+    /// <param name="userName"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public async Task<User> IsUserExistAsync(string account, string password)
+    {
+        if (string.IsNullOrWhiteSpace(account))
+        {
+            throw new ArgumentNullException(nameof(account));
+        }
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            throw new ArgumentNullException(nameof(password));
+        }
+        return await _unitOfWork.GetRepository<User>().GetFirstOrDefaultAsync(predicate: x => (x.Account.Equals(account)) && (x.Password.Equals(password)));
     }
 }

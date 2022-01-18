@@ -1,11 +1,12 @@
 ﻿// Copyright (c) Arch team. All rights reserved.
+using System.Collections.Generic;
 
 namespace MyToDo.Shared
 {
-    /// <summary>
-    /// Provides the interface(s) for paged list of any type.
-    /// </summary>
-    /// <typeparam name="T">The type for paging.</typeparam>
+/// <summary>
+/// Provides the interface(s) for paged list of any type.
+/// </summary>
+/// <typeparam name="T">The type for paging.</typeparam>
     public interface IPagedList<T>
     {
         /// <summary>

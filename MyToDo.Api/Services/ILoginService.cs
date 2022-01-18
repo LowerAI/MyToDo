@@ -1,10 +1,13 @@
-﻿using MyToDo.Shared.Dtos;
+﻿using MyToDo.Api.Context;
+using MyToDo.Shared.Dtos;
 
 namespace MyToDo.Api.Services;
 
 public interface ILoginService
 {
-    Task<ApiResponse> LoginActionAsync(string Account, string Password);
+    Task<bool> AddUserAsync(UserDto user);
 
-    Task<ApiResponse> RegisterAsync(UserDto user);
+    Task<User> IsAccountExistAsync(string account);
+
+    Task<User> IsUserExistAsync(string account, string password);
 }

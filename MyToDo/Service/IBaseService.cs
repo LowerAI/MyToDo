@@ -1,7 +1,6 @@
-﻿using MyToDo.Api.Services;
+﻿using MyToDo.Services;
 using MyToDo.Shared;
 using MyToDo.Shared.Parameters;
-
 using System.Threading.Tasks;
 
 namespace MyToDo.Service;
@@ -16,5 +15,5 @@ public interface IBaseService<TEntity> where TEntity : class
 
     Task<ApiResponse<TEntity>> GetFirstOrDefaultAsync(int id);
 
-    Task<ApiResponse<TEntity>> UpdateAsync(TEntity entity);
+    Task<ApiResponse> UpdateAsync(TEntity entity);
 }

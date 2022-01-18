@@ -2,6 +2,7 @@
 
 using MyToDo.Api.Context;
 using MyToDo.Api.Context.UnitOfWork;
+using MyToDo.Shared;
 using MyToDo.Shared.Dtos;
 using MyToDo.Shared.Parameters;
 
@@ -18,7 +19,7 @@ public class UserService : IUserService
         _mapper = mapper;
     }
 
-    public async Task<ApiResponse> AddAsync(UserDto model)
+    public async Task<bool> AddAsync(UserDto model)
     {
         try
         {
@@ -26,20 +27,15 @@ public class UserService : IUserService
 
             await _unitOfWork.GetRepository<User>().InsertAsync(user);
 
-            if (await _unitOfWork.SaveChangesAsync() > 0)
-            {
-                return new ApiResponse(true, model);
-            }
-
-            return new ApiResponse("添加数据失败!");
+            return await _unitOfWork.SaveChangesAsync() > 0;
         }
-        catch (Exception ex)
+        catch
         {
-            return new ApiResponse(ex.Message);
+            throw;
         }
     }
 
-    public async Task<ApiResponse> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(int id)
     {
         try
         {
@@ -47,50 +43,45 @@ public class UserService : IUserService
             var user = await repository.GetFirstOrDefaultAsync(predicate:x => x.Id.Equals(id));
             repository.Delete(user);
 
-            if (await _unitOfWork.SaveChangesAsync() > 0)
-            {
-                return new ApiResponse(true, id);
-            }
-
-            return new ApiResponse("删除数据失败!");
+            return await _unitOfWork.SaveChangesAsync() > 0;
         }
-        catch (Exception ex)
+        catch
         {
-            return new ApiResponse(ex.Message);
+            throw;
         }
     }
 
-    public async Task<ApiResponse> GetAllAsync(QueryParameter parameters)
+    public async Task<IPagedList<UserDto>> GetAllAsync(QueryParameter parameters)
     {
         try
         {
             var repository = _unitOfWork.GetRepository<User>();
-            var user = await repository.GetAllAsync();
-
-            return new ApiResponse(true, user);
+            var users = await repository.GetPagedListAsync();
+            var userDtos = _mapper.Map<IPagedList<UserDto>>(users);
+            return userDtos;
         }
-        catch (Exception ex)
+        catch
         {
-            return new ApiResponse(ex.Message);
+            throw;
         }
     }
 
-    public async Task<ApiResponse> GetSingleAsync(int id)
+    public async Task<UserDto> GetSingleAsync(int id)
     {
         try
         {
             var repository = _unitOfWork.GetRepository<User>();
             var user = await repository.GetFirstOrDefaultAsync(predicate: x => x.Id.Equals(id));
-
-            return new ApiResponse(true, user);
+            var model = _mapper.Map<UserDto>(user);
+            return model;
         }
-        catch (Exception ex)
+        catch
         {
-            return new ApiResponse(ex.Message);
+            throw;
         }
     }
 
-    public async Task<ApiResponse> UpdateAsync(UserDto entity)
+    public async Task<bool> UpdateAsync(UserDto entity)
     {
         try
         {
@@ -103,16 +94,11 @@ public class UserService : IUserService
 
             repository.Update(user);
 
-            if (await _unitOfWork.SaveChangesAsync() > 0)
-            {
-                return new ApiResponse(true, user);
-            }
-
-            return new ApiResponse("更新数据失败!");
+            return await _unitOfWork.SaveChangesAsync() > 0;
         }
-        catch (Exception ex)
+        catch
         {
-            return new ApiResponse(ex.Message);
+            throw;
         }
     }
 }

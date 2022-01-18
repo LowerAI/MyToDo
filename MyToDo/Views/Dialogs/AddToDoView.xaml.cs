@@ -11,4 +11,9 @@ public partial class AddToDoView : UserControl
     {
         InitializeComponent();
     }
+
+    private void ComboBox_Selected(object sender, System.Windows.RoutedEventArgs e)
+    {
+
+    }
 }

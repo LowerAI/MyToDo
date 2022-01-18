@@ -1,20 +1,18 @@
-﻿using MyToDo.Api.Context;
-using MyToDo.Api.Services;
+﻿using MyToDo.Services;
 using MyToDo.Shared;
 using MyToDo.Shared.Dtos;
 using MyToDo.Shared.Parameters;
-
 using System.Threading.Tasks;
 
 namespace MyToDo.Service;
 
 public class ToDoService : BaseService<ToDoDto>, IToDoService
 {
-    private readonly HttpRestClient client;
+    private readonly HttpRestClient _client;
 
-    public ToDoService(HttpRestClient client) : base(client, nameof(ToDo))
+    public ToDoService(HttpRestClient client) : base(client, "ToDos")
     {
-        this.client = client;
+        _client = client;
     }
 
     /// <summary>
@@ -27,7 +25,20 @@ public class ToDoService : BaseService<ToDoDto>, IToDoService
         BaseRequest request = new BaseRequest();
         request.Method = RestSharp.Method.Get;
         string seachField = string.IsNullOrWhiteSpace(parameter.Search) ? "" : $"&Search={parameter.Search}";
-        request.Route = $"api/{nameof(ToDo)}?PageIndex={parameter.PageIndex}&PageSize={parameter.PageSize}{seachField}&Status={parameter.Status}";
-        return await client.ExecuteAsync<PagedList<ToDoDto>>(request);
+        string statusField = parameter.Status == null ? "" : $"&Status={parameter.Status}";
+        request.Route = $"api/ToDos?PageIndex={parameter.PageIndex}&PageSize={parameter.PageSize}{seachField}{statusField}";
+        var response = await _client.ExecuteAsync(request);
+        var reps = base.ParseResponse<PagedList<ToDoDto>>(response);
+        return reps;
+    }
+
+    public async Task<ApiResponse<SummaryDto>> GetSummaryAsync()
+    {
+        BaseRequest request = new BaseRequest();
+        request.Method = RestSharp.Method.Get;
+        request.Route = $"api/Summarys";
+        var response = await _client.ExecuteAsync(request);
+        var reps = base.ParseResponse<SummaryDto>(response);
+        return reps;
     }
 }

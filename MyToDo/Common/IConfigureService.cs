@@ -1,6 +1,6 @@
 ﻿namespace MyToDo.Common;
 
-public interface IConfigureService
+public interface IConfigureProvider
 {
     void Configure();
 }

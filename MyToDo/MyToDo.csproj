@@ -21,12 +21,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MyToDo.Api\MyToDo.Api.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Resource Include="Images\user.jpg" />
     <Resource Include="Images\wind.jpg" />
   </ItemGroup>
+
+  <Import Project="..\MyToDo.Shared\MyToDo.Shared.projitems" Label="Shared" />
 
 </Project>

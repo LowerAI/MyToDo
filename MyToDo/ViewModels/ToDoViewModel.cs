@@ -1,4 +1,6 @@
-﻿using MyToDo.Service;
+﻿using MyToDo.Common;
+using MyToDo.Extensions;
+using MyToDo.Service;
 using MyToDo.Shared.Dtos;
 using MyToDo.Shared.Parameters;
 
@@ -6,15 +8,15 @@ using Prism.Commands;
 using Prism.Ioc;
 using Prism.Regions;
 
-using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace MyToDo.ViewModels;
 
-public class ToDoViewModel : NavigateViewModel
+public class ToDoViewModel : NavigationViewModel
 {
     private readonly IToDoService _service;
+    private readonly IDialogHostService dialogHost;
 
     public ToDoViewModel(IToDoService service, IContainerProvider provider) : base(provider)
     {
@@ -23,6 +25,7 @@ public class ToDoViewModel : NavigateViewModel
         ExecuteCommand = new DelegateCommand<string>(Execute);
         SelectedCommand = new DelegateCommand<ToDoDto>(Selected);
         DeleteCommand = new DelegateCommand<ToDoDto>(Delete);
+        dialogHost = provider.Resolve<IDialogHostService>();
     }
 
     private string search;
@@ -138,14 +141,29 @@ public class ToDoViewModel : NavigateViewModel
     /// </summary>
     private async void Delete(ToDoDto obj)
     {
-        var deleteResult = await _service.DeleteAsync(obj.Id);
-        if (deleteResult.Status)
+        try
         {
-            var model = ToDoDtos.FirstOrDefault(x => x.Id == obj.Id);
-            if (model != null)
+            var dialogResult = await dialogHost.Question("温馨提示", $"确认删除待办事项:{obj.Title}？");
+            if (dialogResult.Result != Prism.Services.Dialogs.ButtonResult.OK)
             {
-                ToDoDtos.Remove(model);
+                return;
             }
+
+            UpdateLoading(true);
+
+            var deleteResult = await _service.DeleteAsync(obj.Id);
+            if (deleteResult.Status)
+            {
+                var model = ToDoDtos.FirstOrDefault(x => x.Id == obj.Id);
+                if (model != null)
+                {
+                    ToDoDtos.Remove(model);
+                }
+            }
+        }
+        finally
+        {
+            UpdateLoading(false);
         }
     }
 
@@ -187,7 +205,6 @@ public class ToDoViewModel : NavigateViewModel
                 }
             }
         }
-        catch { }
         finally
         {
             UpdateLoading(false);
@@ -211,8 +228,6 @@ public class ToDoViewModel : NavigateViewModel
                 IsRightDrawerOpen = true;
             }
         }
-        catch
-        { }
         finally
         {
             UpdateLoading(false);

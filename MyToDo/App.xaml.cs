@@ -6,10 +6,8 @@ using MyToDo.ViewModels;
 using MyToDo.ViewModels.Dialogs;
 using MyToDo.Views;
 using MyToDo.Views.Dialogs;
-
 using Prism.DryIoc;
 using Prism.Ioc;
-
 using System.Windows;
 
 namespace MyToDo;
@@ -26,7 +24,7 @@ public partial class App : PrismApplication
 
     protected override void OnInitialized()
     {
-        var service = App.Current.MainWindow.DataContext as IConfigureService;
+        var service = App.Current.MainWindow.DataContext as IConfigureProvider;
         if (service != null)
         {
             service.Configure();
@@ -45,6 +43,7 @@ public partial class App : PrismApplication
 
         containerRegistry.RegisterForNavigation<AddToDoView, AddToDoViewModel>();
         containerRegistry.RegisterForNavigation<AddMemoView, AddMemoViewModel>();
+        containerRegistry.RegisterForNavigation<MsgView, MsgViewModel>();
 
         containerRegistry.RegisterForNavigation<IndexView, IndexViewModel>();
         containerRegistry.RegisterForNavigation<ToDoView, ToDoViewModel>();

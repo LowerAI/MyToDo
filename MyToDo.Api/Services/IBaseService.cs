@@ -1,16 +1,17 @@
-﻿using MyToDo.Shared.Parameters;
+﻿using MyToDo.Shared;
+using MyToDo.Shared.Parameters;
 
 namespace MyToDo.Api.Services;
 
 public interface IBaseService<T>
 {
-    Task<ApiResponse> GetAllAsync(QueryParameter parameters);
+    Task<bool> AddAsync(T entity);
 
-    Task<ApiResponse> GetSingleAsync(int id);
+    Task<bool> DeleteAsync(int id);
 
-    Task<ApiResponse> AddAsync(T entity);
+    Task<IPagedList<T>> GetAllAsync(QueryParameter parameters);
 
-    Task<ApiResponse> UpdateAsync(T entity);
+    Task<T> GetSingleAsync(int id);
 
-    Task<ApiResponse> DeleteAsync(int id);
+    Task<bool> UpdateAsync(T entity);
 }

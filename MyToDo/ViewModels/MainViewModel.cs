@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-
-using MyToDo.Common;
+﻿using MyToDo.Common;
 using MyToDo.Common.Models;
 using MyToDo.Extensions;
 
@@ -12,7 +10,7 @@ using System.Collections.ObjectModel;
 
 namespace MyToDo.ViewModels;
 
-public class MainViewModel : BindableBase, IConfigureService
+public class MainViewModel : BindableBase, IConfigureProvider
 {
     public MainViewModel(IRegionManager regionManager)
     {

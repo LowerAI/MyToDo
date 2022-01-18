@@ -2,6 +2,7 @@
 
 using MyToDo.Api.Context;
 using MyToDo.Api.Context.UnitOfWork;
+using MyToDo.Shared;
 using MyToDo.Shared.Dtos;
 using MyToDo.Shared.Parameters;
 
@@ -18,7 +19,7 @@ public class MemoService : IMemoService
         _mapper = mapper;
     }
 
-    public async Task<ApiResponse> AddAsync(MemoDto model)
+    public async Task<bool> AddAsync(MemoDto model)
     {
         try
         {
@@ -26,20 +27,15 @@ public class MemoService : IMemoService
             memo.CreateDate = DateTime.Now;
             await _unitOfWork.GetRepository<Memo>().InsertAsync(memo);
 
-            if (await _unitOfWork.SaveChangesAsync() > 0)
-            {
-                return new ApiResponse(true, memo);
-            }
-
-            return new ApiResponse("添加数据失败!");
+            return await _unitOfWork.SaveChangesAsync() > 0;
         }
-        catch (Exception ex)
+        catch
         {
-            return new ApiResponse(ex.Message);
+            throw;
         }
     }
 
-    public async Task<ApiResponse> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(int id)
     {
         try
         {
@@ -47,50 +43,45 @@ public class MemoService : IMemoService
             var memo = await repository.GetFirstOrDefaultAsync(predicate: x => x.Id.Equals(id));
             repository.Delete(memo);
 
-            if (await _unitOfWork.SaveChangesAsync() > 0)
-            {
-                return new ApiResponse(true, id);
-            }
-
-            return new ApiResponse("删除数据失败!");
+            return await _unitOfWork.SaveChangesAsync() > 0;
         }
-        catch (Exception ex)
+        catch
         {
-            return new ApiResponse(ex.Message);
+            throw;
         }
     }
 
-    public async Task<ApiResponse> GetAllAsync(QueryParameter parameters)
+    public async Task<IPagedList<MemoDto>> GetAllAsync(QueryParameter parameters)
     {
         try
         {
             var repository = _unitOfWork.GetRepository<Memo>();
-            var memo = await repository.GetPagedListAsync(predicate: x => string.IsNullOrWhiteSpace(parameters.Search) ? true : x.Title.Contains(parameters.Search), pageIndex: parameters.PageIndex, pageSize: parameters.PageSize, orderBy: source => source.OrderByDescending(t => t.CreateDate));
-
-            return new ApiResponse(true, memo);
+            var memos = await repository.GetPagedListAsync(predicate: x => string.IsNullOrWhiteSpace(parameters.Search) ? true : x.Title.Contains(parameters.Search), pageIndex: parameters.PageIndex, pageSize: parameters.PageSize, orderBy: source => source.OrderByDescending(t => t.CreateDate));
+            var memoDtos = _mapper.Map<IPagedList<MemoDto>>(memos);
+            return memoDtos;
         }
-        catch (Exception ex)
+        catch
         {
-            return new ApiResponse(ex.Message);
+            throw;
         }
     }
 
-    public async Task<ApiResponse> GetSingleAsync(int id)
+    public async Task<MemoDto> GetSingleAsync(int id)
     {
         try
         {
             var repository = _unitOfWork.GetRepository<Memo>();
             var memo = await repository.GetFirstOrDefaultAsync(predicate: x => x.Id.Equals(id));
-
-            return new ApiResponse(true, memo);
+            var model = _mapper.Map<MemoDto>(memo);
+            return model;
         }
-        catch (Exception ex)
+        catch
         {
-            return new ApiResponse(ex.Message);
+            throw;
         }
     }
 
-    public async Task<ApiResponse> UpdateAsync(MemoDto entity)
+    public async Task<bool> UpdateAsync(MemoDto entity)
     {
         try
         {
@@ -103,16 +94,11 @@ public class MemoService : IMemoService
 
             repository.Update(memo);
 
-            if (await _unitOfWork.SaveChangesAsync() > 0)
-            {
-                return new ApiResponse(true, memo);
-            }
-
-            return new ApiResponse("更新数据失败!");
+            return await _unitOfWork.SaveChangesAsync() > 0;
         }
-        catch (Exception ex)
+        catch
         {
-            return new ApiResponse(ex.Message);
+            throw;
         }
     }
 }

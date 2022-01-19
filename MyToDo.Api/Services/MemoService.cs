@@ -57,7 +57,7 @@ public class MemoService : IMemoService
         {
             var repository = _unitOfWork.GetRepository<Memo>();
             var memos = await repository.GetPagedListAsync(predicate: x => string.IsNullOrWhiteSpace(parameters.Search) ? true : x.Title.Contains(parameters.Search), pageIndex: parameters.PageIndex, pageSize: parameters.PageSize, orderBy: source => source.OrderByDescending(t => t.CreateDate));
-            var memoDtos = _mapper.Map<IPagedList<MemoDto>>(memos);
+            var memoDtos = _mapper.Map<PagedList<MemoDto>>(memos);
             return memoDtos;
         }
         catch

@@ -4,7 +4,7 @@ namespace MyToDo.Service;
 
 public class MemoService : BaseService<MemoDto>, IMemoService
 {
-    public MemoService(HttpRestClient client) : base(client, "Memo")
+    public MemoService(HttpRestClient client) : base(client, "Memos")
     {
     }
 }

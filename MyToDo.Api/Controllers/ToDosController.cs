@@ -26,9 +26,9 @@ public class ToDosController : ControllerBase
         var result = await _service.AddAsync(model);
         if (!result)
         {
-            return StatusCode(202, "添加待办失败！");
+            return StatusCode(500, "添加待办失败！");
         }
-        return StatusCode(201, result);
+        return StatusCode(201);
     }
 
     // DELETE api/ToDos/5
@@ -38,9 +38,9 @@ public class ToDosController : ControllerBase
         var result = await _service.DeleteAsync(id);
         if (!result)
         {
-            return StatusCode(304, "删除待办失败！");
+            return StatusCode(500, "删除待办失败！");
         }
-        return StatusCode(410);
+        return StatusCode(204);
     }
 
     // GET api/ToDos/5
@@ -74,8 +74,8 @@ public class ToDosController : ControllerBase
         var result = await _service.UpdateAsync(model);
         if (!result)
         {
-            return StatusCode(304, "修改待办失败！");
+            return StatusCode(409, "修改待办失败！");
         }
-        return StatusCode(301);
+        return StatusCode(205);
     }
 }

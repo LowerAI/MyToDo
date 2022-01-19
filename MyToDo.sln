@@ -3,9 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.1.32104.313
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyToDo", "MyToDo\MyToDo.csproj", "{1E7E3FEE-7864-4796-9E4B-A9896F2AFBD3}"
-	ProjectSection(ProjectDependencies) = postProject
-		{1B95A9F5-8609-4ADB-8609-580EDDF70E1A} = {1B95A9F5-8609-4ADB-8609-580EDDF70E1A}
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyToDo.Api", "MyToDo.Api\MyToDo.Api.csproj", "{1B95A9F5-8609-4ADB-8609-580EDDF70E1A}"
 EndProject

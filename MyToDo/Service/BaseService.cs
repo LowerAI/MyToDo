@@ -64,7 +64,7 @@ public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class
     public async Task<ApiResponse> UpdateAsync(TEntity entity)
     {
         BaseRequest request = new BaseRequest();
-        request.Method = Method.Patch;
+        request.Method = Method.Put;
         request.Route = $"api/{_serviceName}";
         request.Parameter = entity;
         var response = await _client.ExecuteAsync(request);
@@ -79,7 +79,7 @@ public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class
         if (response.ResponseStatus == ResponseStatus.Error)
         {
             reps.Status = false;
-            reps.Message = response.ErrorMessage;
+            reps.Message = response.ErrorMessage ?? response.ResponseMessage.ReasonPhrase;
             return reps;
         }
         switch (method)
@@ -88,19 +88,19 @@ public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class
                 reps.Status = code == HttpStatusCode.Created;
                 break;
             case Method.Delete:
-                reps.Status = code == HttpStatusCode.Gone;
+                reps.Status = code == HttpStatusCode.NoContent;
                 break;
             case Method.Get:
                 reps.Status = code == HttpStatusCode.OK;
                 break;
             case Method.Put:
-                reps.Status = code == HttpStatusCode.Moved;
+                reps.Status = code == HttpStatusCode.ResetContent;
                 break;
         }
 
         if (contentType == "text/plain")
         {
-            reps.Message = content;
+            reps.Message = content!;
         }
 
         return reps;
@@ -113,7 +113,7 @@ public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class
         if (response.ResponseStatus == ResponseStatus.Error)
         {
             reps.Status = false;
-            reps.Message = response.ErrorMessage;
+            reps.Message = response.ErrorMessage!;
             return reps;
         }
         switch (method)
@@ -134,11 +134,11 @@ public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class
 
         if (contentType == "text/plain")
         {
-            reps.Message = content;
+            reps.Message = content!;
         }
-        else if (contentType == "application/json")
+        else if (contentType == "application/json" && !string.IsNullOrWhiteSpace(response.Content))
         {
-            reps.Result = JsonConvert.DeserializeObject<T>(response.Content);
+            reps.Result = JsonConvert.DeserializeObject<T>(response.Content)!;
         }
 
         return reps;

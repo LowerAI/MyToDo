@@ -26,9 +26,9 @@ public class MemosController : ControllerBase
         var result = await _service.AddAsync(model);
         if (!result)
         {
-            return StatusCode(202, "添加备忘录失败！");
+            return StatusCode(500, "添加备忘录失败！");
         }
-        return StatusCode(201, result);
+        return StatusCode(201);
     }
 
     // DELETE api/Memos/5
@@ -38,9 +38,9 @@ public class MemosController : ControllerBase
         var result = await _service.DeleteAsync(id);
         if (!result)
         {
-            return StatusCode(304, "删除备忘录失败！");
+            return StatusCode(500, "删除备忘录失败！");
         }
-        return StatusCode(410);
+        return StatusCode(204);
     }
 
     // GET api/Memos/5
@@ -74,8 +74,8 @@ public class MemosController : ControllerBase
         var result = await _service.UpdateAsync(model);
         if (!result)
         {
-            return StatusCode(304, "修改待办失败！");
+            return StatusCode(409, "修改待办失败！");
         }
-        return StatusCode(301);
+        return StatusCode(205);
     }
 }

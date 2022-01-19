@@ -29,7 +29,9 @@
                 Text="{Binding Model.Title}" />
 
             <TextBox
+                Name="txt"
                 MinHeight="100"
+                MaxWidth="{Binding ElementName=txt, Path=Width}"
                 Margin="20,10"
                 md:HintAssist.Hint="请输入备忘录内容"
                 AcceptsReturn="True"

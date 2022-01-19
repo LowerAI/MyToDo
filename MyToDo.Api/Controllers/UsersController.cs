@@ -38,13 +38,13 @@ public class UsersController : ControllerBase
 
         if (user != null)
         {
-            return StatusCode(506, $"当前帐号:{param.Account}已存在，请重新注册！");
+            return StatusCode(500, $"当前帐号:{param.Account}已存在，请重新注册！");
         }
 
         if (!await _service.AddUserAsync(param))
         {
-            return StatusCode(507, "创建帐户失败！");
+            return StatusCode(500, "创建帐户失败！");
         }
-        return StatusCode(201, param);
+        return StatusCode(201);
     }
 }

@@ -74,10 +74,6 @@ public class ToDoService : IToDoService
         {
             var repository = _unitOfWork.GetRepository<ToDo>();
             var todos = await repository.GetPagedListAsync(predicate: x => (string.IsNullOrWhiteSpace(parameter.Search) ? true : x.Title.Contains(parameter.Search)) && (parameter.Status == null ? true : x.Status.Equals(parameter.Status)), pageIndex: parameter.PageIndex, pageSize: parameter.PageSize, orderBy: source => source.OrderByDescending(t => t.CreateDate));
-            //var todo = todos.Items[0];
-            //var model = _mapper.Map<ToDoDto>(todo);
-            var src = todos.Items;
-            var dst = _mapper.Map<IList<ToDoDto>>(src);
             var todoDtos = _mapper.Map<PagedList<ToDoDto>>(todos);
             return todoDtos;
         }

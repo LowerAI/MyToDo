@@ -1,13 +1,16 @@
 ﻿using MyToDo.Common;
 using MyToDo.Common.Models;
+using MyToDo.Extensions;
 using MyToDo.Service;
 using MyToDo.Shared.Dtos;
+using MyToDo.Views;
 
 using Prism.Commands;
 using Prism.Ioc;
 using Prism.Regions;
 using Prism.Services.Dialogs;
 
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -18,29 +21,60 @@ public class IndexViewModel : NavigationViewModel
     private readonly IToDoService toDoService;
     private readonly IMemoService memoService;
     private readonly IDialogHostService dialog;
+    private readonly IRegionManager regionManager;
 
     public IndexViewModel(IContainerProvider provider, IDialogHostService dialog) : base(provider)
     {
+        HeaderTitle = $"你好，主人！今天是{DateTime.Now.GetDateTimeFormats('D')[1]}";
         CreateTaskBars();
         ExecuteCommand = new DelegateCommand<string>(Execute);
         EditToDoCommand = new DelegateCommand<ToDoDto>(AddToDo);
         ToDoCompletedCommand = new DelegateCommand<ToDoDto>(Completed);
         EditMemoCommand = new DelegateCommand<MemoDto>(AddMemo);
+        NavigateCommand = new DelegateCommand<TaskBar>(Navigate);
         toDoService = provider.Resolve<IToDoService>();
+        memoService = provider.Resolve<IMemoService>();
+        regionManager = provider.Resolve<IRegionManager>();
 
         this.dialog = dialog;
     }
 
+    private void Navigate(TaskBar obj)
+    {
+        if (string.IsNullOrWhiteSpace(obj.Target))
+        {
+            return;
+        }
+        NavigationParameters param = new();
+        if (obj.Title == "已完成")
+        {
+            param.Add("Value", 2);
+        }
+        regionManager.Regions[PrismManager.MainViewRegionName].RequestNavigate(obj.Target, param);
+    }
+
     private async void Completed(ToDoDto obj)
     {
-        var updateResult = await toDoService.UpdateAsync(obj);
-        if (updateResult.Status)
+        try
         {
-            var todo = summary.ToDoList.FirstOrDefault(t => t.Id.Equals(obj.Id));
-            if (todo != null)
+            UpdateLoading(true);
+            var updateResult = await toDoService.UpdateAsync(obj);
+            if (updateResult.Status)
             {
-                summary.ToDoList.Remove(todo);
+                var todo = summary.ToDoList.FirstOrDefault(t => t.Id.Equals(obj.Id));
+                if (todo != null)
+                {
+                    summary.ToDoList.Remove(todo);
+                    summary.CompletedCount += 1;
+                    Summary.CompletedRatio = (Summary.CompletedCount / (double)Summary.Sum).ToString("0%");
+                    this.Refresh();
+                }
             }
+            _aggregator.SendMessage("已完成!");
+        }
+        finally
+        {
+            UpdateLoading(false);
         }
     }
 
@@ -49,6 +83,17 @@ public class IndexViewModel : NavigationViewModel
     public DelegateCommand<ToDoDto> ToDoCompletedCommand { get; private set; }
     public DelegateCommand<MemoDto> EditMemoCommand { get; private set; }
     public DelegateCommand<string> ExecuteCommand { get; private set; }
+    public DelegateCommand<TaskBar> NavigateCommand { get; private set; }
+
+    private string headerTitle;
+    /// <summary>
+    /// 标头
+    /// </summary>
+    public string HeaderTitle
+    {
+        get { return headerTitle; }
+        set { headerTitle = value; RaisePropertyChanged(); }
+    }
 
     private ObservableCollection<TaskBar> taskBars;
 
@@ -94,29 +139,41 @@ public class IndexViewModel : NavigationViewModel
         }
 
         var dialogResult = await dialog.ShowDialog("AddToDoView", null);
-        if (dialogResult.Result == Prism.Services.Dialogs.ButtonResult.OK)
+        if (dialogResult.Result == ButtonResult.OK)
         {
-            var todo = dialogResult.Parameters.GetValue<ToDoDto>("Value");
-            if (todo.Id > 0)
+            try
             {
-                var updateResult = await toDoService.UpdateAsync(todo);
-                if (updateResult.Status)
+                UpdateLoading(true);
+
+                var todo = dialogResult.Parameters.GetValue<ToDoDto>("Value");
+                if (todo.Id > 0)
                 {
-                    var todoModel = summary.ToDoList.FirstOrDefault(t => t.Id.Equals(model.Id));
-                    if (todoModel != null)
+                    var updateResult = await toDoService.UpdateAsync(todo);
+                    if (updateResult.Status)
                     {
-                        todoModel.Title = todo.Title;
-                        todoModel.Content = todo.Content;
+                        var todoModel = summary.ToDoList.FirstOrDefault(t => t.Id.Equals(model.Id));
+                        if (todoModel != null)
+                        {
+                            todoModel.Title = todo.Title;
+                            todoModel.Content = todo.Content;
+                        }
+                    }
+                }
+                else
+                {
+                    var addResult = await toDoService.AddAsync(todo);
+                    if (addResult.Status)
+                    {
+                        Summary.Sum += 1;
+                        summary.ToDoList.Add(addResult.Result);
+                        Summary.CompletedRatio = (Summary.CompletedCount / (double)Summary.Sum).ToString("0%");
+                        this.Refresh();
                     }
                 }
             }
-            else
+            finally
             {
-                var addResult = await toDoService.AddAsync(todo);
-                if (addResult.Status)
-                {
-                    summary.ToDoList.Add(addResult.Result);
-                }
+                UpdateLoading(false);
             }
         }
     }
@@ -126,37 +183,46 @@ public class IndexViewModel : NavigationViewModel
     /// </summary>
     private async void AddMemo(MemoDto model)
     {
-        DialogParameters param = new();
-        if (model != null)
+        try
         {
-            param.Add("Value", model);
-        }
+            UpdateLoading(true);
 
-        var dialogResult = await dialog.ShowDialog("AddMemoView", null);
-        if (dialogResult.Result == Prism.Services.Dialogs.ButtonResult.OK)
-        {
-            var memo = dialogResult.Parameters.GetValue<MemoDto>("Value");
-            if (memo.Id > 0)
+            DialogParameters param = new();
+            if (model != null)
             {
-                var updateResult = await memoService.UpdateAsync(memo);
-                if (updateResult.Status)
+                param.Add("Value", model);
+            }
+
+            var dialogResult = await dialog.ShowDialog("AddMemoView", null);
+            if (dialogResult.Result == ButtonResult.OK)
+            {
+                var memo = dialogResult.Parameters.GetValue<MemoDto>("Value");
+                if (memo.Id > 0)
                 {
-                    var memoModel = summary.MemoList.FirstOrDefault(t => t.Id.Equals(model.Id));
-                    if (memoModel != null)
+                    var updateResult = await memoService.UpdateAsync(memo);
+                    if (updateResult.Status)
                     {
-                        memoModel.Title = memo.Title;
-                        memoModel.Content = memo.Content;
+                        var memoModel = summary.MemoList.FirstOrDefault(t => t.Id.Equals(model.Id));
+                        if (memoModel != null)
+                        {
+                            memoModel.Title = memo.Title;
+                            memoModel.Content = memo.Content;
+                        }
+                    }
+                }
+                else
+                {
+                    var addResult = await memoService.AddAsync(memo);
+                    if (addResult.Status)
+                    {
+                        summary.MemoList.Add(addResult.Result);
                     }
                 }
             }
-            else
-            {
-                var addResult = await memoService.AddAsync(memo);
-                if (addResult.Status)
-                {
-                    summary.MemoList.Add(addResult.Result);
-                }
-            }
+        }
+        finally
+        {
+            UpdateLoading(false);
         }
     }
 
@@ -166,10 +232,10 @@ public class IndexViewModel : NavigationViewModel
     void CreateTaskBars()
     {
         TaskBars = new();
-        TaskBars.Add(new TaskBar { Icon = "ClockFast", Title = "汇总", Color = "#FF0CA0FF", Target = "" });
-        TaskBars.Add(new TaskBar { Icon = "ClockCheckOutline", Title = "已完成", Color = "#FF1ECA3A", Target = "" });
+        TaskBars.Add(new TaskBar { Icon = "ClockFast", Title = "汇总", Color = "#FF0CA0FF", Target = nameof(ToDoView) });
+        TaskBars.Add(new TaskBar { Icon = "ClockCheckOutline", Title = "已完成", Color = "#FF1ECA3A", Target = nameof(ToDoView) });
         TaskBars.Add(new TaskBar { Icon = "ChartLineVariant", Title = "完成比率", Color = "#FF02C6DC", Target = "" });
-        TaskBars.Add(new TaskBar { Icon = "PlaylistStar", Title = "备忘录", Color = "#FFFFA000", Target = "" });
+        TaskBars.Add(new TaskBar { Icon = "PlaylistStar", Title = "备忘录", Color = "#FFFFA000", Target = nameof(MemoView) });
     }
 
     public override async void OnNavigatedTo(NavigationContext navigationContext)

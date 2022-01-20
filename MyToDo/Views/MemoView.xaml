@@ -85,6 +85,7 @@
                         Source="/Images/wind.jpg" />
                     <TextBlock
                         Margin="0,10"
+                        HorizontalAlignment="Center"
                         FontSize="18"
                         Text="尝试添加一些备忘录，以便在此处查看他们。" />
                 </StackPanel>

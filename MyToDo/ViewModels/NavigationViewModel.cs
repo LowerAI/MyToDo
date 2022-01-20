@@ -10,7 +10,7 @@ namespace MyToDo.ViewModels;
 public class NavigationViewModel : BindableBase, INavigationAware
 {
     private readonly IContainerProvider _containerProvider;
-    private readonly IEventAggregator _aggregator;
+    public readonly IEventAggregator _aggregator;
 
     public NavigationViewModel(IContainerProvider containerProvider)
     {

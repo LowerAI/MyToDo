@@ -1,10 +1,7 @@
 ﻿using MaterialDesignThemes.Wpf;
-
 using MyToDo.Common;
 using MyToDo.Extensions;
-
 using Prism.Events;
-
 using System.Windows;
 using System.Windows.Input;
 
@@ -18,6 +15,12 @@ public partial class MainView : Window
     public MainView(IEventAggregator aggregator, IDialogHostService dialogHost)
     {
         InitializeComponent();
+
+        // 注册提示消息
+        aggregator.RegisterMessage(arg =>
+        {
+            Snackbar.MessageQueue.Enqueue(arg);
+        });
 
         // 注册等待消息窗口
         aggregator.Register(arg =>

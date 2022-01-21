@@ -27,6 +27,7 @@ public class ToDoService : BaseService<ToDoDto>, IToDoService
         string seachField = string.IsNullOrWhiteSpace(parameter.Search) ? "" : $"&Search={parameter.Search}";
         string statusField = parameter.Status == null ? "" : $"&Status={parameter.Status}";
         request.Route = $"api/ToDos?PageIndex={parameter.PageIndex}&PageSize={parameter.PageSize}{seachField}{statusField}";
+        request.Place = PlaceToAddParameter.Form;
         var response = await _client.ExecuteAsync(request);
         var reps = base.ParseResponse<PagedList<ToDoDto>>(response);
         return reps;
@@ -37,6 +38,7 @@ public class ToDoService : BaseService<ToDoDto>, IToDoService
         BaseRequest request = new BaseRequest();
         request.Method = RestSharp.Method.Get;
         request.Route = $"api/Summarys";
+        request.Place = PlaceToAddParameter.None;
         var response = await _client.ExecuteAsync(request);
         var reps = base.ParseResponse<SummaryDto>(response);
         return reps;

@@ -1,16 +1,12 @@
 using AutoMapper;
-
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-
 using MyToDo.Api;
 using MyToDo.Api.Context;
 using MyToDo.Api.Context.Repository;
 using MyToDo.Api.Context.UnitOfWork;
 using MyToDo.Api.Extensions;
 using MyToDo.Api.Services;
-
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);

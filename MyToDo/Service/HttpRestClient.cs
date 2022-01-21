@@ -1,7 +1,5 @@
-﻿using Newtonsoft.Json;
-using RestSharp;
-
-using System.Net;
+﻿using RestSharp;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MyToDo.Service;
@@ -24,15 +22,39 @@ public class HttpRestClient
 
         if (baseRequest.Parameter != null)
         {
-            switch (baseRequest.Method)
+            switch (baseRequest.Place)
             {
-                case Method.Delete:
-                case Method.Get:
-                    request.AddParameter("param", JsonConvert.SerializeObject(baseRequest.Parameter), ParameterType.RequestBody);
+                case PlaceToAddParameter.Body:
+                    //request.AddBody(JsonConvert.SerializeObject(baseRequest.Parameter), "application/json");
+                    request.AddJsonBody(baseRequest.Parameter);
                     break;
-                case Method.Post:
-                case Method.Put:
-                    request.AddBody(JsonConvert.SerializeObject(baseRequest.Parameter), "application/json");
+                case PlaceToAddParameter.Form:
+                    var dict1 = baseRequest.Parameter as Dictionary<string, string>;
+                    foreach (var item in dict1)
+                    {
+                        request.AddParameter(item.Key, item.Value, ParameterType.RequestBody);
+                    }
+                    //request.AddHeader("Content-Type", "multipart/form-data");//如果使用了AddFile会自动添加否则请手动设置
+                    break;
+                case PlaceToAddParameter.Header:
+                    var dict2 = baseRequest.Parameter as Dictionary<string, string>;
+                    foreach (var item in dict2)
+                    {
+                        request.AddHeader(item.Key, item.Value);
+                    }
+                    break;
+                case PlaceToAddParameter.None:
+                    break;
+                case PlaceToAddParameter.Query:
+                    var dict3 = baseRequest.Parameter as Dictionary<string, string>;
+                    foreach (var item in dict3)
+                    {
+                        request.AddQueryParameter(item.Key, item.Value);
+                    }
+                    break;
+                case PlaceToAddParameter.UrlSegment:
+                    string segment = baseRequest.Parameter?.ToString();
+                    baseRequest.Route += $"/{segment}";
                     break;
             }
         }

@@ -1,20 +1,54 @@
 ﻿using MyToDo.Common;
 using MyToDo.Common.Models;
 using MyToDo.Extensions;
-
 using Prism.Commands;
+using Prism.Ioc;
 using Prism.Mvvm;
 using Prism.Regions;
-
 using System.Collections.ObjectModel;
 
 namespace MyToDo.ViewModels;
 
 public class MainViewModel : BindableBase, IConfigureProvider
 {
-    public MainViewModel(IRegionManager regionManager)
+    /// <summary>
+    /// 导航日志
+    /// </summary>
+    private IRegionNavigationJournal journal;
+    private readonly IRegionManager regionManager;
+
+    private ObservableCollection<MenuBar> menuBars;
+    /// <summary>
+    /// 
+    /// </summary>
+    public ObservableCollection<MenuBar> MenuBars
+    {
+        get { return menuBars; }
+        set { menuBars = value; RaisePropertyChanged(); }
+    }
+
+    private string userName;
+    /// <summary>
+    /// 
+    /// </summary>
+    public string UserName
+    {
+        get { return userName; }
+        set { userName = value; RaisePropertyChanged(); }
+    }
+
+    public DelegateCommand LogoutCommand { get; private set; }
+    public DelegateCommand<MenuBar> NavigateCommand { get; private set; }
+    public DelegateCommand GoBackCommand { get; private set; }
+    public DelegateCommand GoForwardCommand { get; private set; }
+
+    public MainViewModel(IContainerProvider containerProvider, IRegionManager regionManager)
     {
         MenuBars = new ObservableCollection<MenuBar>();
+        LogoutCommand = new DelegateCommand(() =>
+        {
+            App.Logout(containerProvider);
+        });
         NavigateCommand = new DelegateCommand<MenuBar>(Navigate);
         this.regionManager = regionManager;
 
@@ -48,24 +82,6 @@ public class MainViewModel : BindableBase, IConfigureProvider
         });
     }
 
-    public DelegateCommand<MenuBar> NavigateCommand { get; private set; }
-    public DelegateCommand GoBackCommand { get; private set; }
-    public DelegateCommand GoForwardCommand { get; private set; }
-
-    private ObservableCollection<MenuBar> menuBars;
-    private readonly IRegionManager regionManager;
-
-    /// <summary>
-    /// 导航日志
-    /// </summary>
-    private IRegionNavigationJournal journal;
-
-    public ObservableCollection<MenuBar> MenuBars
-    {
-        get { return menuBars; }
-        set { menuBars = value; RaisePropertyChanged(); }
-    }
-
     void CreateMenuBar()
     {
         MenuBars.Add(new MenuBar { Icon = "Home", Title = "首页", Namespace = "IndexView" });
@@ -80,8 +96,8 @@ public class MainViewModel : BindableBase, IConfigureProvider
     /// <param name="configuration"></param>
     public void Configure()
     {
+        UserName = AppSession.UserName;
         CreateMenuBar();
-
         regionManager.Regions[PrismManager.MainViewRegionName].RequestNavigate("IndexView");
     }
 }

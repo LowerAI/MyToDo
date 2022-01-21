@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+
 using MyToDo.Api.Services;
 using MyToDo.Shared.Dtos;
 
@@ -9,25 +10,25 @@ namespace MyToDo.Api.Controllers;
 /// </summary>
 [Route("api/[controller]")]
 [ApiController]
-public class UsersController : ControllerBase
+public class LoginController : ControllerBase
 {
     private readonly ILoginService _service;
 
-    public UsersController(ILoginService service)
+    public LoginController(ILoginService service)
     {
         _service = service ?? throw new ArgumentNullException(nameof(service));
     }
 
     // GET api/Users
     [HttpGet(Name = nameof(Login))]
-    public async Task<IActionResult> Login(string account, string password)
+    public async Task<IActionResult> Login([FromForm] string account, [FromForm] string password)
     {
         var user = await _service.IsUserExistAsync(account, password);
         if (user == null)
         {
             return NotFound(); // StatusCode:404
         }
-        return Ok(); // StatusCode:200
+        return Ok(user); // StatusCode:200
     }
 
     // POST api/Users

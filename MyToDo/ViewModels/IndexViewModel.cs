@@ -4,12 +4,10 @@ using MyToDo.Extensions;
 using MyToDo.Service;
 using MyToDo.Shared.Dtos;
 using MyToDo.Views;
-
 using Prism.Commands;
 using Prism.Ioc;
 using Prism.Regions;
 using Prism.Services.Dialogs;
-
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -25,7 +23,7 @@ public class IndexViewModel : NavigationViewModel
 
     public IndexViewModel(IContainerProvider provider, IDialogHostService dialog) : base(provider)
     {
-        HeaderTitle = $"你好，主人！今天是{DateTime.Now.GetDateTimeFormats('D')[1]}";
+        HeaderTitle = $"你好，{AppSession.UserName}！今天是{DateTime.Now.GetDateTimeFormats('D')[1]}";
         CreateTaskBars();
         ExecuteCommand = new DelegateCommand<string>(Execute);
         EditToDoCommand = new DelegateCommand<ToDoDto>(AddToDo);

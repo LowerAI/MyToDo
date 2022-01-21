@@ -1,10 +1,8 @@
 ﻿using AutoMapper;
-
 using MyToDo.Api.Context;
 using MyToDo.Api.Context.UnitOfWork;
 using MyToDo.Shared.Dtos;
-
-using System.Security.Principal;
+using MyToDo.Shared.Extensions;
 
 namespace MyToDo.Api.Services;
 
@@ -31,7 +29,7 @@ public class LoginService : ILoginService
             var model = _mapper.Map<User>(user);
 
             var repository = _unitOfWork.GetRepository<User>();
-
+            model.Password = model.Password.GetMD5();
             model.CreateDate = DateTime.Now;
             await repository.InsertAsync(model);
 
@@ -75,6 +73,9 @@ public class LoginService : ILoginService
         {
             throw new ArgumentNullException(nameof(password));
         }
+
+        //password = password.GetMD5();
+
         return await _unitOfWork.GetRepository<User>().GetFirstOrDefaultAsync(predicate: x => (x.Account.Equals(account)) && (x.Password.Equals(password)));
     }
 }

@@ -10,10 +10,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Dtos\MemoDto.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Dtos\RegisterUserDto.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Dtos\SummaryDto.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Dtos\ToDoDto.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Dtos\UserDto.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Dtos\BaseDto.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\StringExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IPagedList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PagedList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Parameters\QueryParameter.cs" />

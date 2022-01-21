@@ -25,6 +25,7 @@ public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class
         request.Method = Method.Post;
         request.Route = $"api/{_serviceName}";
         request.Parameter = entity;
+        request.Place = PlaceToAddParameter.Body;
         var response = await _client.ExecuteAsync(request);
         var reps = ParseResponse<TEntity>(response);
         return reps;
@@ -35,6 +36,7 @@ public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class
         BaseRequest request = new BaseRequest();
         request.Method = Method.Delete;
         request.Route = $"api/{_serviceName}/{Id}";
+        request.Place = PlaceToAddParameter.UrlSegment;
         var response = await _client.ExecuteAsync(request);
         var reps = ParseResponse(response);
         return reps;
@@ -46,6 +48,7 @@ public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class
         request.Method = Method.Get;
         string seachField = string.IsNullOrWhiteSpace(parameter.Search) ? "" : $"&Search={parameter.Search}";
         request.Route = $"api/{_serviceName}?PageIndex={parameter.PageIndex}&PageSize={parameter.PageSize}{seachField}";
+        request.Place = PlaceToAddParameter.Form;
         var response = await _client.ExecuteAsync(request);
         var reps = ParseResponse<PagedList<TEntity>>(response);
         return reps;
@@ -56,6 +59,7 @@ public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class
         BaseRequest request = new BaseRequest();
         request.Method = Method.Get;
         request.Route = $"api/{_serviceName}/{id}";
+        request.Place = PlaceToAddParameter.UrlSegment;
         var response = await _client.ExecuteAsync(request);
         var reps = ParseResponse<TEntity>(response);
         return reps;
@@ -67,6 +71,7 @@ public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class
         request.Method = Method.Put;
         request.Route = $"api/{_serviceName}";
         request.Parameter = entity;
+        request.Place = PlaceToAddParameter.Body;
         var response = await _client.ExecuteAsync(request);
         var reps = ParseResponse(response);
         return reps;
@@ -79,7 +84,7 @@ public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class
         if (response.ResponseStatus == ResponseStatus.Error)
         {
             reps.Status = false;
-            reps.Message = response.ErrorMessage ?? response.ResponseMessage.ReasonPhrase;
+            reps.Message = response.ErrorMessage ?? response.StatusDescription;
             return reps;
         }
         switch (method)

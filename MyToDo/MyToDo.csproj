@@ -5,11 +5,17 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>Images\favicon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Images\login.png" />
     <None Remove="Images\user.jpg" />
     <None Remove="Images\wind.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Images\favicon.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,10 +23,14 @@
     <PackageReference Include="Microsoft.DependencyValidation.Analyzers" Version="0.11.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
-    <PackageReference Include="RestSharp" Version="107.0.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Samples\SSC_For_All\RestSharp\src\RestSharp\RestSharp.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\login.png" />
     <Resource Include="Images\user.jpg" />
     <Resource Include="Images\wind.jpg" />
   </ItemGroup>

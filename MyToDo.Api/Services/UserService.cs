@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-
 using MyToDo.Api.Context;
 using MyToDo.Api.Context.UnitOfWork;
 using MyToDo.Shared;

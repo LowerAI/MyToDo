@@ -1,5 +1,4 @@
 ﻿using DryIoc;
-
 using MyToDo.Common;
 using MyToDo.Service;
 using MyToDo.ViewModels;
@@ -8,6 +7,7 @@ using MyToDo.Views;
 using MyToDo.Views.Dialogs;
 using Prism.DryIoc;
 using Prism.Ioc;
+using Prism.Services.Dialogs;
 using System.Windows;
 
 namespace MyToDo;
@@ -24,7 +24,17 @@ public partial class App : PrismApplication
 
     protected override void OnInitialized()
     {
-        var service = App.Current.MainWindow.DataContext as IConfigureProvider;
+        var dialog = Container.Resolve<IDialogService>();
+        dialog.ShowDialog("LoginView", callback =>
+         {
+             if (callback.Result == ButtonResult.None)
+             {
+                 Current.Shutdown();
+                 return;
+             }
+         });
+
+        var service = Current.MainWindow.DataContext as IConfigureProvider;
         if (service != null)
         {
             service.Configure();
@@ -40,6 +50,8 @@ public partial class App : PrismApplication
         containerRegistry.Register<IToDoService, ToDoService>();
         containerRegistry.Register<IMemoService, MemoService>();
         containerRegistry.Register<IDialogHostService, DialogHostService>();
+
+        containerRegistry.RegisterDialog<LoginView, LoginViewModel>();
 
         containerRegistry.RegisterForNavigation<AddToDoView, AddToDoViewModel>();
         containerRegistry.RegisterForNavigation<AddMemoView, AddMemoViewModel>();

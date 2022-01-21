@@ -9,11 +9,11 @@ namespace MyToDo.Api.Controllers;
 /// </summary>
 [Route("api/[controller]")]
 [ApiController]
-public class UsersController : ControllerBase
+public class LoginController : ControllerBase
 {
     private readonly ILoginService _service;
 
-    public UsersController(ILoginService service)
+    public LoginController(ILoginService service)
     {
         _service = service ?? throw new ArgumentNullException(nameof(service));
     }

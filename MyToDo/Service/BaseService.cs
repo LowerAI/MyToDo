@@ -118,7 +118,7 @@ public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class
         if (response.ResponseStatus == ResponseStatus.Error)
         {
             reps.Status = false;
-            reps.Message = response.ErrorMessage!;
+            reps.Message = response.ErrorMessage ?? response.StatusDescription;
             return reps;
         }
         switch (method)

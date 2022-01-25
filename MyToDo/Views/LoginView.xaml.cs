@@ -1,20 +1,17 @@
 ﻿using MyToDo.Extensions;
-
 using Prism.Events;
 using System.Windows.Controls;
 
 namespace MyToDo.Views;
 
-namespace MyToDo.Views
+/// <summary>
+/// LoginView.xaml 的交互逻辑
+/// </summary>
+public partial class LoginView : UserControl
 {
-    /// <summary>
-    /// LoginView.xaml 的交互逻辑
-    /// </summary>
-    public partial class LoginView : UserControl
-    {
     public LoginView(IEventAggregator agregator)
-        {
-            InitializeComponent();
+    {
+        InitializeComponent();
 
         agregator.RegisterMessage(arg =>
         {

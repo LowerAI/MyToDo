@@ -5,14 +5,16 @@ using System.Windows.Controls;
 
 namespace MyToDo.Views;
 
-/// <summary>
-/// LoginView.xaml 的交互逻辑
-/// </summary>
-public partial class LoginView : UserControl
+namespace MyToDo.Views
 {
-    public LoginView(IEventAggregator agregator)
+    /// <summary>
+    /// LoginView.xaml 的交互逻辑
+    /// </summary>
+    public partial class LoginView : UserControl
     {
-        InitializeComponent();
+    public LoginView(IEventAggregator agregator)
+        {
+            InitializeComponent();
 
         agregator.RegisterMessage(arg =>
         {
